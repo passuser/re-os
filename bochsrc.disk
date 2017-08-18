@@ -1,0 +1,13 @@
+#config_interface: x
+#display_library: x
+memory: guest=64, host=32                                         #定义内存
+romimage: file= /usr/share/bochs/BIOS-bochs-latest                  #bios映像
+vgaromimage: file= /usr/share/bochs/VGABIOS-lgpl-latest             #视屏图形阵列标准
+vga: extension=vbe, update_freq=5                                
+boot: disk                                                        #从硬盘启动
+log: ~/re-os/log/Bochs.out                                        #日志输出文件位置
+mouse: enabled=0                                                  #鼠标定义不可用
+   keyboard: type=mf, serial_delay=200, paste_delay=100000
+   keyboard: keymap= /usr/share/bochs/keymaps/x11-pc-us.map                         #美式键盘
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14                    #硬盘设置
+ata0-master: type=disk, path="hd60.img", mode=flat, cylinders=121, heads=16, spt=63

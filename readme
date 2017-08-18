@@ -1,0 +1,4 @@
+这是一个基于bochs模拟器的操作系统
+环境：linux
+工具：gcc nasm 不支持gdb调试bochs
+
