@@ -16,14 +16,14 @@ VIDEO_DESC:         dd             0x80000007;limit = (0xbffff ~ 0xb8000)/4k = 0
  GDT_LIMIT               equ           GDT_SIZE-1
        times       60 db     0       ;预留描述符空位
 SELECTOR_CODE       equ     (0x0001 << 3) + TI_GDT + RPL0 
-SELECTOR_DATE       equ     (0x0002 << 3) + TI_GDT + RPL0
+SELECTOR_DATA       equ     (0x0002 << 3) + TI_GDT + RPL0
 SELECTOR_VIDEO      equ     (0x0003 << 3) + TI_GDT + RPL0
 
 
 gdt_ptr              dw                GDT_LIMIT
                      dd                GDT_BASE
   DispStr     db  "Wecome to loader!"
- loader_star:
+ loader_start:
 ;--------------------循环实现字符串输出------------------------------------------------------------------------------------------
    mov ax,DispStr
    mov bx,ax
@@ -48,12 +48,12 @@ out 0x92,al                    ;打开A20
 
 mov eax,cr0
 or  eax,00000001B
-out cr0,eax                    ;cro寄存器pe位置1
+mov cr0,eax                    ;cro寄存器pe位置1
 
 lgdt [gdt_ptr]                 ;加载GDT
 
 
-     jmp   dword SELECTOR_CODE:p_mode_satart      ; 刷新流水线
+     jmp   dword SELECTOR_CODE:p_mode_start      ; 刷新流水线
 
 [bits 32]
 p_mode_start:
@@ -62,7 +62,7 @@ p_mode_start:
      mov es,ax
      mov ss,ax
      mov esp,LOADER_STACK_TOP
-     mov ax,SELCTOR_VIDEO
+     mov ax,SELECTOR_VIDEO
      mov gs,ax
 
      mov byte [gs:160],'p' 
