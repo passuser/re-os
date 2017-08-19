@@ -42,10 +42,12 @@ Str:
    inc di
     loop Str
 ;-----------------------------------------------进入保护模式---------------------------------------------------------------------------
+mov ax,0
 in al,0x92
 or al,00000010B
 out 0x92,al                    ;打开A20
 
+mov eax,0
 mov eax,cr0
 or  eax,00000001B
 mov cr0,eax                    ;cro寄存器pe位置1
@@ -53,7 +55,7 @@ mov cr0,eax                    ;cro寄存器pe位置1
 lgdt [gdt_ptr]                 ;加载GDT
 
 
-     jmp   dword SELECTOR_CODE:p_mode_start      ; 刷新流水线
+     jmp   dword   SELECTOR_CODE:p_mode_start      ; 刷新流水线
 
 [bits 32]
 p_mode_start:
@@ -66,5 +68,6 @@ p_mode_start:
      mov gs,ax
 
      mov byte [gs:160],'p' 
+     mov byte [gs:161],0xa8
 
 jmp $
