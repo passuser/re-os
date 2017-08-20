@@ -10,7 +10,7 @@ CODE_DESC:          dd             0x0000ffff
                     dd             DESC_CODE_HIGH4
 DATA_STACK_DESC:    dd             0x0000ffff
                     dd             DESC_DATA_HIGH4
-VIDEO_DESC:         dd             0x80000007;limit = (0xbffff ~ 0xb8000)/4k = 0x7
+VIDEO_DESC:         dd             0xb8000007;limit = (0xbffff ~ 0xb8000)/4k = 0x7
                     dd             DESC_VIDEO_HIGH4
  GDT_SIZE                equ           $-GDT_BASE
  GDT_LIMIT               equ           GDT_SIZE-1

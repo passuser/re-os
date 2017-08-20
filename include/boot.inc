@@ -9,7 +9,7 @@ DESC_ALV          equ              00000000_00000000_00000b
 DESC_LIMIT_CODE2  equ              11110000_00000000_0000b
 DESC_LIMIT_DATA2  equ              DESC_LIMIT_CODE2
 DESC_LIMIT_VIDEO2 equ              00000000_00000000_000b
-DESC_P            equ              10000000_00000000_00b
+DESC_P            equ              10000000_00000000b
 DESC_DPL_0        equ              00000000_0000000b
 DESC_DPL_1        equ              01000000_0000000b
 DESC_DPL_2        equ              10000000_0000000b
