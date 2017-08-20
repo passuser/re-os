@@ -66,7 +66,16 @@ p_mode_start:
      mov esp,LOADER_STACK_TOP
      mov ax,SELECTOR_VIDEO
      mov gs,ax
-
-     mov byte [gs:0x140],'p' 
-
+     mov ax,bootstr
+     mov bx,ax
+     mov edi,0
+     mov ecx,26
+display:
+     mov byte dl,[ds:bx]
+     mov byte [gs:edi+0x140],dl 
+     inc bx
+     inc edi
+     inc edi
+      loop  display
 jmp $
+  bootstr:  db  "you turned on protect-mode"
