@@ -10,7 +10,7 @@ CODE_DESC:          dd             0x0000ffff
                     dd             DESC_CODE_HIGH4
 DATA_STACK_DESC:    dd             0x0000ffff
                     dd             DESC_DATA_HIGH4
-VIDEO_DESC:         dd             0xb8000007;limit = (0xbffff ~ 0xb8000)/4k = 0x7
+VIDEO_DESC:         dd             0x80000007;limit = (0xbffff ~ 0xb8000)/4k = 0x7
                     dd             DESC_VIDEO_HIGH4
  GDT_SIZE                equ           $-GDT_BASE
  GDT_LIMIT               equ           GDT_SIZE-1
@@ -29,14 +29,14 @@ gdt_ptr              dw                GDT_LIMIT
    mov bx,ax
    mov ax,0
    mov ds,ax
-   mov ax,0xb8a0
+   mov ax,0xb800
    mov gs,ax
    mov di,0
    mov cx,17
 Str:
    mov byte dl,[ds:bx]
-   mov byte [gs:di],dl
-   mov byte [gs:di+1],0xa4
+   mov byte [gs:di+0xa0],dl
+   mov byte [gs:di+0xa1],0xa4
    inc bx
    inc di
    inc di
@@ -67,7 +67,6 @@ p_mode_start:
      mov ax,SELECTOR_VIDEO
      mov gs,ax
 
-     mov byte [gs:160],'p' 
-     mov byte [gs:161],0xa8
+     mov byte [gs:0x140],'p' 
 
 jmp $

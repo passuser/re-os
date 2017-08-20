@@ -27,7 +27,7 @@ DESC_TYPE_DATA    equ              00100000_0000b
  DESC_L   +   DESC_ALV    +  DESC_LIMIT_DATA2   +   DESC_P    +    DESC_DPL_0   +    DESC_S_DATA  +  DESC_TYPE_DATA  +  0x00
 
   DESC_VIDEO_HIGH4  equ              (0x00 << 24)  +  DESC_G_4K     +   DESC_D_32   +  \
- DESC_L   +   DESC_ALV    +  DESC_LIMIT_VIDEO2  +   DESC_P    +    DESC_DPL_0   +    DESC_S_DATA  +  DESC_TYPE_DATA  +  0X00
+ DESC_L   +   DESC_ALV    +  DESC_LIMIT_VIDEO2  +   DESC_P    +    DESC_DPL_0   +    DESC_S_DATA  +  DESC_TYPE_DATA  +  0X0b
 
 ;------------------------------------------选择子属性-------------------------------------------------------------------------
 RPL0        equ          00b

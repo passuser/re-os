@@ -47,7 +47,7 @@ DispStr:
 	mov cx,0
 	mov byte cl,[es:bx]
 	mov byte [gs:di],cl
-	mov byte [gs:di+1],0xe8
+	mov byte [gs:di+1],0x84
 	inc bx
 	inc di
 	inc di
