@@ -36,3 +36,10 @@ RPL2        equ          10b
 RPL3        equ          11b
 TI_GDT      equ          000b
 TI_LDT      equ          100b
+;-----------------------------------page table-------------------------------------------------------------------------------
+PAGE_DIR_TABLE_POS    EQU           0x100000
+PG_P                  EQU           1b
+PG_RW_R               EQU           00b
+PG_RW_W               EQU           10b
+PG_US_S               EQU           000b
+PG_US_U               EQU           100b

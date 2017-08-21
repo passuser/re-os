@@ -22,8 +22,83 @@ SELECTOR_VIDEO      equ     (0x0003 << 3) + TI_GDT + RPL0
 
 gdt_ptr              dw                GDT_LIMIT
                      dd                GDT_BASE
-  DispStr     db  "Wecome to loader!"
+
+total_mem_bytes  dd    0
+ards_buf     times     244     db      0
+ards_nr      dw        0
+ 
+DispStr     db  "Wecome to loader!"
  loader_start:
+;----------------------------mem----------------------------------------------------------------------------------------------------
+    xor ebx,ebx                      ;ebx = 0
+    mov edx,0x534d4150
+    mov di,ards_buf
+    
+E820_mem_get:
+     mov eax,0xe820
+     mov ecx,20
+     int 0x15
+     jc E801_mem_get
+     add di,cx
+     inc word [ards_nr]
+     cmp ebx,0
+     jnz E820_mem_get
+
+     mov cx,[ards_nr]
+     mov ebx,ards_buf
+     xor edx,edx                        ;edx = 0
+
+find_max_mem_area:
+        mov eax,[edx]                   ;base add low
+	add eax,[edx+8]                 ; length low
+	add ebx,20                      ;next ards
+	cmp edx,eax
+;bubble sort
+    jge next_ards
+    mov edx,eax                  ;edx store mem summ
+    
+next_ards:
+    loop  find_max_mem_area
+    jmp   mem_get_ok
+;-----------------------------------------E820 finish------------------------
+E801_mem_get:
+   mov ax,0xe801
+   int 0x15
+   jc  .88_mem_get
+   mov cx,0x400
+   mul cx
+   shl edx,16
+   and eax,0xffff
+   or  edx,eax
+   add edx,0x100000
+   mov esi,edx
+
+   xor eax,eax
+   mov ax,bx
+   mov ecx,0x100000
+   mul ecx
+
+   add esi,eax
+   mov edx,esi
+   jmp mem_get_ok
+;---------------------------------------E801 finish--------------------
+.88_mem_get:
+   mov ah,0x88
+   int 0x15
+;   jc  error_hlt           ; Not need it for now
+   and eax,0xffff
+   mov cx,0x400
+   mul cx
+   shl edx,16
+   or edx,eax
+   add edx,0x100000
+;------------------------------------88 finish-----------------------------
+mem_get_ok:
+   mov [total_mem_bytes],edx
+
+
+
+
 ;--------------------循环实现字符串输出------------------------------------------------------------------------------------------
    mov ax,DispStr
    mov bx,ax
@@ -77,5 +152,70 @@ display:
      inc edi
      inc edi
       loop  display
+;------------------------------------turn on page table--------------------------------------------------------------
+call  setup_page
+sgdt  [gdt_ptr]                  ; update  GDT
+mov   ebx,[gdt_ptr + 2]
+or dword [ebx + 0x18 + 4],0xc0000000
+add dword [gdt_ptr + 2],0xc0000000
+
+add esp,0xc0000000
+
+mov eax,PAGE_DIR_TABLE_POS
+mov cr3,eax
+
+mov eax,cr0
+or eax,0x80000000
+mov cr0,eax
+
+lgdt [gdt_ptr]                           ; update gdt finish
+
+mov byte [gs:480],'V'
+
+;------------------------------------------create page table---------------------------------------------------------
+setup_page:
+   mov ecx,4096
+   mov esi,0
+clear_page_dir:
+   mov byte [PAGE_DIR_TABLE_POS + esi],0
+   inc esi
+   loop clear_page_dir
+
+create_pde:
+   mov eax,PAGE_DIR_TABLE_POS
+   add eax,0x1000
+   mov ebx,eax
+   
+   or eax,PG_US_U | PG_RW_W | PG_P
+
+   mov [PAGE_DIR_TABLE_POS + 0x0],eax
+   mov [PAGE_DIR_TABLE_POS + 0xc00],eax
+   sub eax,0x1000
+   mov [PAGE_DIR_TABLE_POS + 4092],eax
+
+;create pte
+  mov ecx,256
+  mov esi,0
+  mov edx,PG_US_U | PG_RW_W | PG_P
+
+create_pte:
+   mov [ebx+esi*4],edx
+   add edx,4096
+   inc esi
+   loop create_pte
+
+    mov eax,PAGE_DIR_TABLE_POS
+    add eax,0x200
+    or eax,PG_US_U | PG_RW_W | PG_P
+    mov  ebx,PAGE_DIR_TABLE_POS
+    mov  ecx,254
+    mov  esi,769
+    
+create_kernel_pde:
+    mov [ebx + esi*4],eax
+    inc esi
+    add eax,0x1000
+    loop create_kernel_pde
+    ret
 jmp $
   bootstr:  db  "you turned on protect-mode"
