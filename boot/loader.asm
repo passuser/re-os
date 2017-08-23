@@ -85,14 +85,17 @@ E801_mem_get:
 .88_mem_get:
    mov ah,0x88
    int 0x15
+
 ;   jc  error_hlt           ; Not need it for now
+
    and eax,0xffff
    mov cx,0x400
    mul cx
    shl edx,16
    or edx,eax
    add edx,0x100000
-;------------------------------------88 finish-----------------------------
+;------------------------------------88 finish----------------------------
+
 mem_get_ok:
    mov [total_mem_bytes],edx
 
@@ -171,7 +174,7 @@ mov cr0,eax
 lgdt [gdt_ptr]                           ; update gdt finish
 
 mov byte [gs:480],'V'
-
+jmp $
 ;------------------------------------------create page table---------------------------------------------------------
 setup_page:
    mov ecx,4096
@@ -217,5 +220,4 @@ create_kernel_pde:
     add eax,0x1000
     loop create_kernel_pde
     ret
-jmp $
   bootstr:  db  "you turned on protect-mode"
