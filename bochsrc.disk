@@ -1,6 +1,7 @@
 #config_interface: x
 #display_library: x
-memory: guest=64, host=32                                         #定义内存
+#memory: guest=64, host=32                                         #定义内存
+megs: 32
 romimage: file= /usr/share/bochs/BIOS-bochs-latest                  #bios映像
 vgaromimage: file= /usr/share/bochs/VGABIOS-lgpl-latest             #视屏图形阵列标准
 vga: extension=vbe, update_freq=5                                

@@ -1,7 +1,10 @@
-这是一个基于bochs模拟器的操作系统，写这个的目的是为了练习掌握vim,git等工具，顺便学习操作系统。我只是一个学生，而且还不是计算机方面的，因此这个项目很有可能完不成。不过，我会去尽力完成的。
+This is a operating system based on bochs simulator. Writing this purpose is to practice master vim, git and other tools,by the way to learn the 
+operating system. I am just a student, and not a CS student, so this project is likely to fail. But I will try to finish it.
+这是一个基于bochs模拟器的操作系统，写这个的目的是为了练习掌握vim,git等工具，顺便学习操作系统。我只是一个学生，而且还不是计算机方面的，
+因此这个项目很有可能完不成。不过，我会去尽力完成的。
 
 环境：linux
-工具：gcc nasm 不支持gdb调试的bochs
+工具：gcc nasm ld 不支持gdb调试的bochs
 参考书籍：《操作系统真象还原》郑钢著  等书籍
 文件目录介绍：
 boot/   用于存放系统启动的文件
