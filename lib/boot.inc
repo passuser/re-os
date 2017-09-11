@@ -36,6 +36,11 @@ RPL2        equ          10b
 RPL3        equ          11b
 TI_GDT      equ          000b
 TI_LDT      equ          100b
+
+SELECTOR_CODE       equ     (0x1 << 3) + TI_GDT + RPL0 
+SELECTOR_DATA       equ     (0x2 << 3) + TI_GDT + RPL0
+SELECTOR_VIDEO      equ     (0x3 << 3) + TI_GDT + RPL0   ;  video selector
+
 ;-----------------------------------page table-------------------------------------------------------------------------------
 PAGE_DIR_TABLE_POS    EQU           0x100000
 PG_P                  EQU           1b
