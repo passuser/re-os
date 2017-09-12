@@ -48,3 +48,9 @@ PG_RW_R               EQU           00b
 PG_RW_W               EQU           10b
 PG_US_S               EQU           000b
 PG_US_U               EQU           100b
+
+;load kernel
+KERNEL_START_SECTOR   equ  0x9
+KERNEL_BIN_BASE_ADDR  equ  0x70000
+PT_NULL               equ  0
+KERNEL_ENTRY_POINT    equ  0xc0001500
