@@ -1,7 +1,7 @@
-%inclde "boot.inc"
+%include "boot.inc"
 [bits 32]
 section  .data:
-               put_int_buffer   dp   0
+               put_int_buffer   dq   0
 section  .text:
 global put_str
   put_str:

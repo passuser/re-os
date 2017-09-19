@@ -1,8 +1,7 @@
 %include "boot.inc"
-org       LOADER_BASE_ADDR
+org    LOADER_BASE_ADDR
+jmp    load_start 
 LOADER_STACK_TOP   equ    LOADER_BASE_ADDR
-jmp loader_start
-
 ;------------------------------------------构建GDT及其内部描述符------------------------------------------------------------------
 GDT_BASE:           dd             0x0
                     dd             0x0
@@ -23,10 +22,9 @@ gdt_ptr              dw                GDT_LIMIT
 total_mem_bytes  dd    0
 ards_buf     times     244     db      0
 ards_nr      dw        0
- 
-DispStr     db  "Wecome to loader!"
- loader_start:
+
 ;----------------------------mem_get----------------------------------------------------------------------------------------------------
+load_start:
     xor ebx,ebx                      ;ebx = 0
     mov edx,0x534d4150
     mov di,ards_buf
@@ -151,14 +149,15 @@ display:
      inc bx
      inc edi
      inc edi
-      loop  display
+     loop  display
+
 ;load kernel
 mov eax,KERNEL_START_SECTOR
 mov ebx,KERNEL_BIN_BASE_ADDR
-
 mov ecx,200
 
 call rd_disk_m_32
+
 ;------------------------------------turn on page table--------------------------------------------------------------
 call  setup_page
 sgdt  [gdt_ptr]                  ; update  GDT
@@ -177,7 +176,6 @@ mov cr0,eax
 
 lgdt [gdt_ptr]                           ; update gdt finish
 
-mov byte [gs:480],'V'
 
 jmp SELECTOR_CODE:enter_kernel          ; flash
 
@@ -186,6 +184,8 @@ enter_kernel:
 	      mov  esp,0xc009f000
 	      jmp  KERNEL_ENTRY_POINT
 
+DispStr     db  "Wecome to loader!"
+bootstr:  db  "you turned on protect-mode"
 ;------------------------------------------create page table---------------------------------------------------------
 setup_page:
    mov ecx,4096
@@ -231,7 +231,6 @@ create_kernel_pde:
     add eax,0x1000
     loop create_kernel_pde
     ret
-  bootstr:  db  "you turned on protect-mode"
 ;-----------------------------------------------COPY SEGMENT--------------------------------------------------------------------
 kernel_init:
              xor eax,eax
@@ -307,16 +306,16 @@ not_ready:
           cmp al,0x08
           jnz not_ready
 
-          mov ax,di
-          mov dx,256
+          mov eax,edi
+          mov dx,128
           mul dx
-          mov cx,ax
+          mov ecx,eax
 
           mov dx,0x1f0
 go_on_read:
-          in ax,dx
-          mov [bx],ax
-          add bx,2
+          in eax,dx
+          mov [ebx],eax
+          add ebx,4
           loop go_on_read
           ret
              

@@ -56,7 +56,7 @@ DispStr:
        
 mov eax,LOADER_START_SECTOR
 mov bx,LOADER_BASE_ADDR
-mov cx,6
+mov cx,8
 call rd_disk_m_16
 
 jmp  LOADER_BASE_ADDR
