@@ -2,3 +2,8 @@
 *.img
 *.swp
 *.o
+hook/
+info/
+HEAD
+config
+description
