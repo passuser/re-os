@@ -2,8 +2,12 @@
 *.img
 *.swp
 *.o
-hook/
-info/
+hooks
+branches
+description
+objects
+refs
+info
 HEAD
 config
 description

@@ -22,7 +22,8 @@ gdt_ptr              dw                GDT_LIMIT
 total_mem_bytes  dd    0
 ards_buf     times     244     db      0
 ards_nr      dw        0
-
+DispStr     db  "Wecome to loader!"
+bootstr:  db  "you turned on protect-mode"
 ;----------------------------mem_get----------------------------------------------------------------------------------------------------
 load_start:
     xor ebx,ebx                      ;ebx = 0
@@ -184,8 +185,6 @@ enter_kernel:
 	      mov  esp,0xc009f000
 	      jmp  KERNEL_ENTRY_POINT
 
-DispStr     db  "Wecome to loader!"
-bootstr:  db  "you turned on protect-mode"
 ;------------------------------------------create page table---------------------------------------------------------
 setup_page:
    mov ecx,4096
@@ -318,4 +317,4 @@ go_on_read:
           add ebx,4
           loop go_on_read
           ret
-             
+         
