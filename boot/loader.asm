@@ -1,5 +1,6 @@
 %include "boot.inc"
 org    LOADER_BASE_ADDR
+nop 
 jmp    load_start 
 LOADER_STACK_TOP   equ    LOADER_BASE_ADDR
 ;------------------------------------------构建GDT及其内部描述符------------------------------------------------------------------
@@ -218,7 +219,7 @@ create_pte:
    loop create_pte
 
     mov eax,PAGE_DIR_TABLE_POS
-    add eax,0x200
+    add eax,0x2000
     or eax,PG_US_U | PG_RW_W | PG_P
     mov  ebx,PAGE_DIR_TABLE_POS
     mov  ecx,254

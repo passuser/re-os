@@ -3,7 +3,7 @@
 #include  "stdint.h"
 static inline void outb(uint16_t port, uint8_t data)
 {
-	asm volatile ("outb  %b0,%wl": : "a" (data),"Nd"(port));
+	asm( "outb %b0,%w1":: "a" (data),"Nd"(port));
 }
 static inline void outsw(uint16_t port,const void*  addr,uint32_t word_cnt)
 {
