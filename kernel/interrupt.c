@@ -65,14 +65,13 @@ static void general_intr_handler(uint8_t vec_nr)
 	{return;}
 	put_str("interrupt vector : 0x");
 	put_int(vec_nr);
-	put_char('\n');
+	put_str("!\n");
 	}
-
 
 static void exception_init(void)
 {int i;
 for (i =0;i < IDT_DESC_CNT;i++){
-     idt_table[i] = &general_intr_handler;
+     idt_table[i] = general_intr_handler;
      intr_name[i] = "unkown";
      }
      intr_name[0] = "#DE Divide Error!";
@@ -99,7 +98,9 @@ for (i =0;i < IDT_DESC_CNT;i++){
 void idt_init(){ 
 	put_str ("idt_init start\n");
 	idt_desc_init();
-	pic_init();
+	exception_init();
+    pic_init();
+    
 
 	uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
 	asm volatile ("lidt %0":: "m" (idt_operand));
