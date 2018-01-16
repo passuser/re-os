@@ -9,7 +9,7 @@
 #define PIC_S_CTRL  0xa0
 #define PIC_S_DATA  0xa1
 #define IDT_DESC_CNT 0x21
-#define EFLAGS_IF    0X200
+#define EFLAGS_IF    0X200                             /*定义if位为1*/
 #define GET_EFLAGS(EFLAG_VAR)  asm volatile ("pushfl;popl %0":"=g" (EFLAG_VAR))
 struct gate_desc
 {
