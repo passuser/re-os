@@ -7,6 +7,6 @@ void init_all(void)
 {
 	put_str("init_all start!\n");
 	idt_init();
-	timer_init();
+	timer_init();   
 }
 

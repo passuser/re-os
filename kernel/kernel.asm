@@ -1,7 +1,7 @@
 [bits 32]
 %define ERROR_CODE  nop
 %define ZERO  push 0
-extern idt_table;
+extern idt_table
 section .data
 global  intr_entry_table
 intr_entry_table:
@@ -18,7 +18,6 @@ mov al,0x20
 out 0xa0,al
 out 0x20,al
 push %1 
-nop
 call [idt_table + %1*4]
 jmp  intr_exit 
 section  .data
