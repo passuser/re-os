@@ -4,23 +4,24 @@ section  .data:
                put_int_buffer   dq   0
 section  .text:
 global put_str
-  put_str:
-          push ebx
-	  push ecx
-          xor ecx,ecx
-	  mov ebx,[esp + 12]
+put_str:
+    push ebx
+	push ecx
+    xor ecx,ecx
+	mov ebx,[esp + 12]
+
 .goon:
-       mov cl,[ebx]
-       cmp cl,0
-       jz  .str_over
-       push ecx
-       call put_char
-       add esp,4
-       inc ebx
-       jmp .goon
+    mov cl,[ebx]
+    cmp cl,0
+    jz  .str_over
+    push ecx
+    call put_char
+    add esp,4
+    inc ebx
+    jmp .goon
 
 .str_over:
-           pop ecx
+       pop ecx
 	   pop ebx
 	   ret
 
@@ -28,16 +29,16 @@ global put_str
 
 global put_char
 put_char:
-         pushad
+     pushad
 	 mov ax,SELECTOR_VIDEO
 	 mov gs,ax
 
-mov dx,0x3d4
-mov al,0xe
-out dx,al
-mov dx,0x3d5
-in al,dx
-mov ah,al
+     mov dx,0x3d4
+     mov al,0xe
+     out dx,al
+     mov dx,0x3d5
+     in al,dx
+     mov ah,al
 
 mov dx,0x3d4
 mov al,0xf

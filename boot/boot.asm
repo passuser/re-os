@@ -8,32 +8,8 @@ mov bh,0x07
 mov cx,0
 mov dx,0x184f
 int 0x10
-;----------操作显卡------------use display card----------------------
-;mov byte [gs:0x00],'H'              ;  这里可以用循环实现
-;mov byte [gs:0x01],0xa4             ;
-;mov byte [gs:0x02],'e'              ;
-;mov byte [gs:0x03],0xa4             ;  
-;mov byte [gs:0x04],'l'
-;mov byte [gs:0x05],0xa4
-;mov byte [gs:0x06],'l'
-;mov byte [gs:0x07],0xa4
-;mov byte [gs:0x08],'o'
-;mov byte [gs:0x09],0xa4
-;mov byte [gs:0x0a],','
-;mov byte [gs:0x0b],0xa4
-;mov byte [gs:0x0c],'r'
-;mov byte [gs:0x0d],0xa4
-;mov byte [gs:0x0e],'e'
-;mov byte [gs:0x0f],0xa4
-;mov byte [gs:0x10],'-'
-;mov byte [gs:0x11],0xa4
-;mov byte [gs:0x12],'o'
-;mov byte [gs:0x13],0xa4
-;mov byte [gs:0x14],'s'
-;mov byte [gs:0x15],0xa4
-;mov byte [gs:0x16],'!'
-;mov byte [gs:0x17],0xa4
-;-------------------重写----------------------------------------------------------------------------------------------------
+
+;-----------------------------------------------------------------------------------------------------------------------
   mov ax,0xb800
   mov gs,ax
   mov ax,0
@@ -41,9 +17,10 @@ int 0x10
   mov ax,bootmessage
   mov bx,ax
   mov di,0                            ;初始化，将字符串地址传递DS，显存地址传递GS，si,di置零.
-  mov cx,12
+  mov cx,30
+
 DispStr:
-        push cx
+    push cx
 	mov cx,0
 	mov byte cl,[es:bx]
 	mov byte [gs:di],cl
@@ -52,19 +29,19 @@ DispStr:
 	inc di
 	inc di
 	pop cx
- loop DispStr
+    loop DispStr
        
 mov eax,LOADER_START_SECTOR
 mov bx,LOADER_BASE_ADDR
-mov cx,8
+mov cx,10
 call rd_disk_m_16
-
 jmp  LOADER_BASE_ADDR
 
+
+;十六位模式下读取硬盘
 rd_disk_m_16:
 mov esi,eax
 mov di,cx
-;读写硬盘
 mov dx,0x1f2
 mov al,cl
 out dx,al
@@ -107,6 +84,7 @@ mul dx
 mov cx,ax
 
 mov dx,0x1f0
+
 go_on_read:
 in ax,dx
 mov [bx],ax
@@ -114,6 +92,6 @@ add bx,2
 loop go_on_read
 ret
 
-bootmessage:  db   "Hello,re-os!"
- times  510-($-$$)  db       0
- dw 0xaa55
+bootmessage:  db   "booting system"
+times  510-($-$$)  db       0
+dw 0xaa55

@@ -1,5 +1,5 @@
-LOADER_BASE_ADDR equ 0x800
-LOADER_START_SECTOR equ 0x2
+LOADER_BASE_ADDR equ 0x700
+LOADER_START_SECTOR equ 0x3
 ;-----------------------------------------------------gdt 描述符属性----------------------------------------------------------------
 DESC_G_4K         equ              10000000_00000000_00000000b
 DESC_D_32         equ              10000000_00000000_0000000b

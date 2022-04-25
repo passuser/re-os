@@ -1,7 +1,7 @@
 object =build
 startaddr = -Ttext 0xc0001500
-lib = -I lib/ -I lib/kernel/ 
-c_filety = -c -m32 -fno-builtin -o
+lib = -I lib/ -I lib/kernel/ -g 
+c_filety = -c -m32 -fno-builtin -fno-stack-protector  -o
 ld_filety = -e main -melf_i386 -o
 filety = -f elf -o
 OBJS = $(object)/main.o $(object)/printf.o $(object)/kernel.o $(object)/init.o $(object)/interrupt.o $(object)/timer.o $(object)/debug.o 
@@ -25,4 +25,4 @@ $(object)/timer.o: device/timer.c  lib/kernel/timer.h
 $(object)/debug.o: kernel/debug.c lib/kernel/debug.h
 	    gcc $(lib)  $(c_filety) build/debug.o kernel/debug.c
 $(object)/kernel.bin: $(OBJS)
-		ld $(startaddr) $(ld_filety) build/kernel.bin $(OBJS) 
+		ld  $(startaddr) $(ld_filety) build/kernel.bin $(OBJS) 

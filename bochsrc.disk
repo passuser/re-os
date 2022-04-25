@@ -1,5 +1,5 @@
-#config_interface: x
-#display_library: x
+#config_interface: sdl
+#display_library: sdl
 #memory: guest=64, host=32                                         #定义内存
 megs: 32
 romimage: file= /usr/share/bochs/BIOS-bochs-latest                  #bios映像
@@ -11,4 +11,5 @@ mouse: enabled=0                                                  #鼠标定义�
    keyboard: type=mf, serial_delay=200, paste_delay=100000
    keyboard: keymap= /usr/share/bochs/keymaps/x11-pc-us.map                         #美式键盘
 ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14                    #硬盘设置
-ata0-master: type=disk, path="hd60.img", mode=flat, cylinders=121, heads=16, spt=63
+ata0-master: type=disk, path="hd60.img", mode=flat
+#gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0

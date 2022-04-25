@@ -1,6 +1,5 @@
 %include "boot.inc"
 org    LOADER_BASE_ADDR
-nop 
 jmp    load_start 
 LOADER_STACK_TOP   equ    LOADER_BASE_ADDR
 ;------------------------------------------构建GDT及其内部描述符------------------------------------------------------------------
@@ -12,19 +11,19 @@ DATA_STACK_DESC:    dd             0xffff
                     dd             DESC_DATA_HIGH4
 VIDEO_DESC:         dd             0x80000007;limit = (0xbffff ~ 0xb8000)/4k = 0x7
                     dd             DESC_VIDEO_HIGH4
- GDT_SIZE                equ           $-GDT_BASE
- GDT_LIMIT               equ           GDT_SIZE-1
-       times       60 dq    0       ;预留描述符空位
+GDT_SIZE            equ           $-GDT_BASE
+GDT_LIMIT           equ           GDT_SIZE-1
+times       60      dq              0       ;预留描述符空位
 
 
 gdt_ptr              dw                GDT_LIMIT
                      dd                GDT_BASE
 
-total_mem_bytes  dd    0
-ards_buf     times     244     db      0
-ards_nr      dw        0
-DispStr     db  "Wecome to loader!"
-bootstr:  db  "you turned on protect-mode"
+total_mem_bytes   dd    0
+ards_buf          times     244     db      0
+ards_nr           dw        0
+LoaderStr         db  "Wecome to loader!"
+PageStr           db  "you turned on protect-mode"
 ;----------------------------mem_get----------------------------------------------------------------------------------------------------
 load_start:
     xor ebx,ebx                      ;ebx = 0
@@ -46,10 +45,11 @@ E820_mem_get:
      xor edx,edx                        ;edx = 0
 
 find_max_mem_area:
-        mov eax,[edx]                   ;base add low
+    mov eax,[edx]                   ;base add low
 	add eax,[edx+8]                 ; length low
 	add ebx,20                      ;next ards
 	cmp edx,eax
+
 ;bubble sort
     jge next_ards
     mov edx,eax                  ;edx store mem summ
@@ -57,6 +57,7 @@ find_max_mem_area:
 next_ards:
     loop  find_max_mem_area
     jmp   mem_get_ok
+
 ;-----------------------------------------E820 finish------------------------
 E801_mem_get:
    mov ax,0xe801
@@ -100,7 +101,7 @@ mem_get_ok:
 
 
 ;--------------------循环实现字符串输出------------------------------------------------------------------------------------------
-   mov ax,DispStr
+   mov ax,LoaderStr
    mov bx,ax
    mov ax,0
    mov ds,ax
@@ -108,6 +109,7 @@ mem_get_ok:
    mov gs,ax
    mov di,0
    mov cx,17
+
 Str:
    mov byte dl,[ds:bx]
    mov byte [gs:di+0xa0],dl
@@ -115,7 +117,7 @@ Str:
    inc bx
    inc di
    inc di
-    loop Str
+   loop Str
 ;-----------------------------------------------进入保护模式---------------------------------------------------------------------------
 mov ax,0
 in al,0x92
@@ -129,8 +131,7 @@ mov cr0,eax                    ;cro寄存器pe位置1
 
 lgdt [gdt_ptr]                 ;加载GDT
 
-
-     jmp   dword   SELECTOR_CODE:p_mode_start      ; 刷新流水线
+jmp   dword   SELECTOR_CODE:p_mode_start      ; 刷新流水线
 
 [bits 32]
 p_mode_start:
@@ -141,7 +142,7 @@ p_mode_start:
      mov esp,LOADER_STACK_TOP
      mov ax,SELECTOR_VIDEO
      mov gs,ax
-     mov ax,bootstr
+     mov ax,PageStr
      mov bx,ax
      mov edi,0
      mov ecx,26
@@ -182,9 +183,9 @@ lgdt [gdt_ptr]                           ; update gdt finish
 jmp SELECTOR_CODE:enter_kernel          ; flash
 
 enter_kernel:
-              call kernel_init
-	      mov  esp,0xc009f000
-	      jmp  KERNEL_ENTRY_POINT
+        call kernel_init
+	    mov  esp,0xc009f000
+	    jmp  KERNEL_ENTRY_POINT
 
 ;------------------------------------------create page table---------------------------------------------------------
 setup_page:
@@ -233,13 +234,13 @@ create_kernel_pde:
     ret
 ;-----------------------------------------------COPY SEGMENT--------------------------------------------------------------------
 kernel_init:
-             xor eax,eax
+         xor eax,eax
 	     xor ebx,ebx
 	     xor ecx,ecx
 	     xor edx,edx            ;set 0
 
 	     mov dx,[KERNEL_BIN_BASE_ADDR + 42]
-             mov ebx,[KERNEL_BIN_BASE_ADDR + 28]
+         mov ebx,[KERNEL_BIN_BASE_ADDR + 28]
 	     add ebx,KERNEL_BIN_BASE_ADDR
 	     mov cx,[KERNEL_BIN_BASE_ADDR + 44]
 
@@ -259,7 +260,7 @@ kernel_init:
 	ret
 
 mem_copy:
-         cld
+     cld
 	 push ebp
 	 mov  ebp,esp
 	 push ecx
@@ -273,7 +274,7 @@ mem_copy:
 	 ret 
 
 rd_disk_m_32:
-             mov esi,eax
+         mov esi,eax
 	     mov edi,ecx
              
 	     mov dx,0x1f3
@@ -282,21 +283,21 @@ rd_disk_m_32:
 	     mov eax,esi
 
 	     mov dx,0x1f3
-             out dx,al
+         out dx,al
 
 	     mov cl,8
 	     shr eax,cl
 	     mov dx,0x1f4
 	     out dx,al
-             shr eax,cl
-             and al,0xf
-             or al,0xe0
-             mov dx,0x1f6
-             out dx,al
+         shr eax,cl
+         and al,0xf
+         or al,0xe0
+         mov dx,0x1f6
+         out dx,al
 
-             mov dx,0x1f7
-             mov al,0x20
-             out dx,al
+         mov dx,0x1f7
+         mov al,0x20
+         out dx,al
 
 not_ready:
           nop
