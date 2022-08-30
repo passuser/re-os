@@ -1,7 +1,8 @@
 %include "boot.inc"
 org    LOADER_BASE_ADDR
-jmp    load_start 
 LOADER_STACK_TOP   equ    LOADER_BASE_ADDR
+jmp load_addr 
+
 ;------------------------------------------构建GDT及其内部描述符------------------------------------------------------------------
 GDT_BASE:           dd             0x0
                     dd             0x0
@@ -13,19 +14,19 @@ VIDEO_DESC:         dd             0x80000007;limit = (0xbffff ~ 0xb8000)/4k = 0
                     dd             DESC_VIDEO_HIGH4
 GDT_SIZE            equ           $-GDT_BASE
 GDT_LIMIT           equ           GDT_SIZE-1
-times       60      dq              0       ;预留描述符空位
-
+times               60            dq              0       ;预留描述符空位
+db                  0
+total_mem_bytes     dd             1
 
 gdt_ptr              dw                GDT_LIMIT
                      dd                GDT_BASE
 
-total_mem_bytes   dd    0
-ards_buf          times     244     db      0
+ards_buf          times     250     db      0
 ards_nr           dw        0
 LoaderStr         db  "Wecome to loader!"
 PageStr           db  "you turned on protect-mode"
 ;----------------------------mem_get----------------------------------------------------------------------------------------------------
-load_start:
+load_addr:
     xor ebx,ebx                      ;ebx = 0
     mov edx,0x534d4150
     mov di,ards_buf
@@ -45,14 +46,12 @@ E820_mem_get:
      xor edx,edx                        ;edx = 0
 
 find_max_mem_area:
-    mov eax,[edx]                   ;base add low
-	add eax,[edx+8]                 ; length low
+  mov eax,[ebx]                   ;base add low
+  add eax,[ebx+8]                 ; length low
 	add ebx,20                      ;next ards
 	cmp edx,eax
-
-;bubble sort
-    jge next_ards
-    mov edx,eax                  ;edx store mem summ
+  jge next_ards
+  mov edx,eax                  ;edx store mem summ
     
 next_ards:
     loop  find_max_mem_area
@@ -62,7 +61,7 @@ next_ards:
 E801_mem_get:
    mov ax,0xe801
    int 0x15
-   jc  .88_mem_get
+   jc  E88_mem_get
    mov cx,0x400
    mul cx
    shl edx,16
@@ -80,7 +79,7 @@ E801_mem_get:
    mov edx,esi
    jmp mem_get_ok
 ;---------------------------------------E801 finish--------------------
-.88_mem_get:
+E88_mem_get:
    mov ah,0x88
    int 0x15
 
@@ -183,9 +182,9 @@ lgdt [gdt_ptr]                           ; update gdt finish
 jmp SELECTOR_CODE:enter_kernel          ; flash
 
 enter_kernel:
-        call kernel_init
-	    mov  esp,0xc009f000
-	    jmp  KERNEL_ENTRY_POINT
+  call kernel_init
+	mov  esp,0xc009f000
+	jmp  KERNEL_ENTRY_POINT
 
 ;------------------------------------------create page table---------------------------------------------------------
 setup_page:
@@ -234,44 +233,44 @@ create_kernel_pde:
     ret
 ;-----------------------------------------------COPY SEGMENT--------------------------------------------------------------------
 kernel_init:
-         xor eax,eax
-	     xor ebx,ebx
-	     xor ecx,ecx
-	     xor edx,edx            ;set 0
+  xor eax,eax
+	xor ebx,ebx
+	xor ecx,ecx
+	xor edx,edx            ;set 0
 
-	     mov dx,[KERNEL_BIN_BASE_ADDR + 42]
-         mov ebx,[KERNEL_BIN_BASE_ADDR + 28]
-	     add ebx,KERNEL_BIN_BASE_ADDR
-	     mov cx,[KERNEL_BIN_BASE_ADDR + 44]
+	mov dx,[KERNEL_BIN_BASE_ADDR + 42]
+  mov ebx,[KERNEL_BIN_BASE_ADDR + 28]
+	add ebx,KERNEL_BIN_BASE_ADDR
+	mov cx,[KERNEL_BIN_BASE_ADDR + 44]
 
 .each_segment:
-              cmp byte [ebx + 0],PT_NULL
-	      je .PTNULL
-              push dword [ebx +16]
-	      mov  eax,[ ebx + 4]
-	      add  eax,KERNEL_BIN_BASE_ADDR
-	      push eax
-	      push dword [ebx +8]
-	      call mem_copy
-	      add  esp,12
+  cmp byte [ebx + 0],PT_NULL
+	je .PTNULL
+  push dword [ebx +16]
+	mov  eax,[ ebx + 4]
+	add  eax,KERNEL_BIN_BASE_ADDR
+	push eax
+	push dword [ebx +8]
+	call mem_copy
+	add  esp,12
 .PTNULL:
-        add  ebx,edx
+  add  ebx,edx
 	loop .each_segment
 	ret
 
 mem_copy:
-     cld
-	 push ebp
-	 mov  ebp,esp
-	 push ecx
-	 mov  edi,[ebp + 8]
-	 mov  esi,[ebp + 12]
-	 mov  ecx,[ebp + 16]
-	 rep  movsb
+  cld
+	push ebp
+	mov  ebp,esp
+	push ecx
+	mov  edi,[ebp + 8]
+	mov  esi,[ebp + 12]
+	mov  ecx,[ebp + 16]
+	rep  movsb
 
-	 pop  ecx
-	 pop  ebp
-	 ret 
+	pop  ecx
+	pop  ebp
+	ret 
 
 rd_disk_m_32:
          mov esi,eax

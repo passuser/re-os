@@ -108,7 +108,7 @@ void idt_init(){
 	put_str ("idt_init start\n");
 	idt_desc_init();
 	exception_init();
-    pic_init();
+  pic_init();
 	uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t)((uint32_t)idt << 16)));
 	asm volatile ("lidt %0":: "m" (idt_operand));
 	put_str("idt_init done!\n");
