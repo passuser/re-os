@@ -7,7 +7,7 @@
 #define   PG_RW_W  2
 #define   PG_US_S  0
 #define   PG_US_U  4
-
+#define   PG_SIZE  4096
 #include "stdint.h"
 #include "bitmap.h"
 

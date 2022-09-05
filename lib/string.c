@@ -42,16 +42,16 @@ int8_t memcmp (const void* a_,const void* b_,uint32_t size){
 /*将字符串从srt_复制到dst_*/
 char* strcopy (char* dst_,const char* src_){
 
-    ASSERT (*src_ != NULL && *dst_ != NULL);
+    ASSERT (src_ != NULL && dst_ != NULL);
     char* r = dst_;
-    while (*dst_++ = *src_++);
+    while ((*dst_++ = *src_++));
     return r;
 }
 
 /* 返回字符串长度 */
 uint32_t strlen(const char* str ){
     
-    ASSERT (*str != NULL);
+    ASSERT (str != NULL);
     const char* p = str;
     while (*p++);
     return (p - str -1);
@@ -60,7 +60,7 @@ uint32_t strlen(const char* str ){
 /*比较字符串，a大于b，返回1，相等返回0，小于返回-1 */
 int8_t strcmp (const char* a,const char* b){
 
-    ASSERT (*a != NULL && *b != NULL);
+    ASSERT (a != NULL && b != NULL);
     while (*a != 0 && *a == *b){
         a++;
         b++;
@@ -71,7 +71,7 @@ int8_t strcmp (const char* a,const char* b){
 /* 从左向右查找字符串str中首次出现字符ch的地址  */
 char* strchr (const char* str,uint8_t ch){
 
-    ASSERT (*str != NULL);
+    ASSERT (str != NULL);
     while (*str != 0){
         if (*str == ch){
             return (char*)str;
@@ -109,7 +109,7 @@ char* strcat (char* dst_,const char* src_){
 /*在字符串str中查找字符ch出现的次数*/
 uint32_t strchrs (const char* str,uint8_t ch){
 
-    ASSERT (*str != NULL);
+    ASSERT (str != NULL);
     const char* p = str;
     uint32_t n = 0;
     while (*p != 0){

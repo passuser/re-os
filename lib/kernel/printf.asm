@@ -29,16 +29,16 @@ put_str:
 
 global put_char
 put_char:
-     pushad
-	 mov ax,SELECTOR_VIDEO
-	 mov gs,ax
+  pushad
+	mov ax,SELECTOR_VIDEO
+	mov gs,ax
 
-     mov dx,0x3d4
-     mov al,0xe
-     out dx,al
-     mov dx,0x3d5
-     in al,dx
-     mov ah,al
+  mov dx,0x3d4
+  mov al,0xe
+  out dx,al
+  mov dx,0x3d5
+  in al,dx
+  mov ah,al
 
 mov dx,0x3d4
 mov al,0xf
@@ -63,7 +63,7 @@ jmp .put_other
 	      inc bx
 	      mov byte [gs:bx],0x7
 	      shr bx,1
-	      jmp .set_cursor
+	      jmp set_cursor
 
 .put_other:
             shl bx,1
@@ -73,7 +73,7 @@ jmp .put_other
 	    shr bx,1
 	    inc bx
 	    cmp bx,2000
-	    jl  .set_cursor
+	    jl  set_cursor
 
 .is_line_feed:
 .is_carriage_return:
@@ -85,21 +85,21 @@ jmp .put_other
 
 
 .is_carriage_return_end:
-                        add bx,80
-			cmp bx,2000
+  add bx,80
+	cmp bx,2000
 
 .is_line_feed_end:
-                       jl .set_cursor
+  jl set_cursor
 
 
 .roll_screen:
-             cld
-	     mov ecx,960
-	     mov esi,0xc00b80a0
-	     mov edi,0xc00b8000
-	     rep movsd
-	     mov ebx,3840
-	     mov ecx,80
+  cld
+	mov ecx,960
+	mov esi,0xc00b80a0
+	mov edi,0xc00b8000
+	rep movsd
+	mov ebx,3840
+	mov ecx,80
 
 
 .cls:
@@ -109,21 +109,21 @@ jmp .put_other
 	 mov  bx,1920
 
 
+global set_cursor
+set_cursor:
+  mov dx,0x3d4
+	mov al,0xe
+	out dx,al
+	mov dx,0x3d5
+	mov al,bh
+	out dx,al
 
-.set_cursor:
-             mov dx,0x3d4
-	     mov al,0xe
-	     out dx,al
-	     mov dx,0x3d5
-	     mov al,bh
-	     out dx,al
-
-	     mov dx,0x3d4
-	     mov al,0xf
-	     out dx,al
-	     mov dx,0x3d5
-	     mov al,bl
-	     out dx,al
+	mov dx,0x3d4
+	mov al,0xf
+	out dx,al
+	mov dx,0x3d5
+	mov al,bl
+	out dx,al
 
 
 .put_char_done:
@@ -131,21 +131,21 @@ jmp .put_other
 	       ret
 
 global put_int
-   put_int:
-           pushad
-	   mov ebp,esp
-	   mov eax,[ebp + 4*9]
-	   mov edx,eax
-	   mov edi,7
-	   mov ecx,8
-           mov ebx,put_int_buffer
+put_int:
+  pushad
+	mov ebp,esp
+	mov eax,[ebp + 4*9]
+	mov edx,eax
+	mov edi,7
+	mov ecx,8
+  mov ebx,put_int_buffer
 
 .16based_4bits:
-           and edx,0xf
-	   cmp edx,9
-	   jg  .isA2F
-	   add edx,'0'
-	   jmp .store
+  and edx,0xf
+	cmp edx,9
+	jg  .isA2F
+	add edx,'0'
+	jmp .store
 
 .isA2F:
        sub edx,10

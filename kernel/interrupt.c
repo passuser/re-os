@@ -4,6 +4,7 @@
 #include "io.h"
 #include "printf.h"
 
+
 #define     PIC_M_CTRL              0x20
 #define     PIC_M_DATA              0x21
 #define     PIC_S_CTRL              0xa0
@@ -14,16 +15,15 @@
 
 struct gate_desc{
 
-	uint16_t    func_offset_low_word;
-	uint16_t    selector;
-	uint8_t     dcount;
-	uint8_t     attribute;
-	uint16_t    func_offset_high_word;
+  uint16_t    func_offset_low_word;
+  uint16_t    selector;
+  uint8_t     dcount;
+  uint8_t     attribute;
+  uint16_t    func_offset_high_word;
 };
 
 static void make_idt_desc(struct gate_desc* p_gdesc,uint8_t attr,intr_handler function);
 static struct gate_desc idt[IDT_DESC_CNT];
-
 char* intr_name[IDT_DESC_CNT];
 intr_handler idt_table[IDT_DESC_CNT];
 extern intr_handler intr_entry_table[IDT_DESC_CNT];
@@ -153,5 +153,9 @@ enum intr_status intr_get_status(){
     GET_EFLAGS(eflags);
     return ( EFLAGS_IF & eflags )? INTR_ON : INTR_OFF;
 }
+
+void register_handler(uint8_t vector_no,intr_handler function){
+      idt_table[vector_no] = function;    
+};
 
 
