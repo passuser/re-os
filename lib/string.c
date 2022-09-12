@@ -1,6 +1,6 @@
 #include "string.h"
-#include "global.h"
-#include "debug.h"
+#include "../lib/kernel/global.h"
+#include "../lib/kernel/debug.h"
 
 
 /*将dst_起始的size个字节设为value */
@@ -9,7 +9,7 @@ void memset (void* dst_,uint8_t value,uint32_t size){
     ASSERT (dst_ != NULL);
     uint8_t* dst = (uint8_t*) dst_;
     while ( size-- > 0){
-        *dst++ = value;
+        *(dst++) = value;
     }
 }
 
@@ -20,7 +20,7 @@ void memcopy (void* dst_,const void* src_,uint32_t size){
     uint8_t* dst = dst_;
     const uint8_t* src = src_;
     while (size-- > 0){
-        *dst++ = *src++;
+        *(dst++) = *(src++);
     }
 }
 
@@ -44,7 +44,7 @@ char* strcopy (char* dst_,const char* src_){
 
     ASSERT (src_ != NULL && dst_ != NULL);
     char* r = dst_;
-    while ((*dst_++ = *src_++));
+    while ((*(dst_++) = *(src_++)));
     return r;
 }
 
@@ -53,7 +53,7 @@ uint32_t strlen(const char* str ){
     
     ASSERT (str != NULL);
     const char* p = str;
-    while (*p++);
+    while (*(p++));
     return (p - str -1);
 }
 
@@ -100,9 +100,9 @@ char* strcat (char* dst_,const char* src_){
 
     ASSERT(dst_ != NULL && src_ != NULL);
     char* str = dst_;
-    while (*str++);
+    while (*(str++));
     --str;
-    while(*str++ = *src_++);
+    while((*(str++) = *(src_++)));
     return dst_;
 }
 

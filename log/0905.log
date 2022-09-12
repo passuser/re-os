@@ -1,2 +1,0 @@
-I add printf function on kernel.I find a problem that don't use nasm to include "boot.inc" documents.It's terrible that don't quote define variable.
-Don't solve it.

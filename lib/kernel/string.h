@@ -1,4 +1,6 @@
 #include "stdint.h"
+
+
 void memset (void* dst_,uint8_t value,uint32_t size);
 void memcopy (void* dst_,const void* src_,uint32_t size);
 int8_t memcmp (const void* a_,const void* b_,uint32_t size);

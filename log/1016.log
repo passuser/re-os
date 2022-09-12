@@ -1,6 +1,0 @@
-果然是interrupt.c未写入。提高时钟频率时遇到
-interrupt(): vector must be within IDT table limits, IDT.limit = 0x107
-00019441395e[CPU0 ] check_cs(0x1544): conforming code seg descriptor dpl > cpl, dpl=3, cpl=0
-Next at t=1944299
-很奇怪的问题，当用make编译时会出现gdt>limit,手动编译则不会出现这类现象；还有提高了时钟频率，先是正常执行
-0x20中断，然后ired报错。

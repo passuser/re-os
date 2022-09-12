@@ -1,5 +1,4 @@
 #include "memory.h"
-#include "stdint.h"
 #include "printf.h"
 #include "global.h" 
 #include "debug.h"
@@ -7,7 +6,6 @@
 
 #define   PDE_IDX(addr)     ((addr & 0xffc00000) >> 22)
 #define   PTE_IDX(addr)     ((addr & 0x3ff000) >> 12)
-#define   PG_SIZE           4096 
 #define   MEM_BITMAP_BASE   0XC009A000
 #define   K_HEAP_SATART     0XC0100000
 
@@ -24,7 +22,6 @@ struct virtual_addr kernel_vaddr;
 
 /*初始化内存池*/
 static void mem_pool_init (uint32_t all_mem){
-
     put_str ("memory pool init start!\n");
     uint32_t page_table_size = PG_SIZE * 256;
     uint32_t used_mem = page_table_size + 0x100000;
@@ -102,7 +99,7 @@ static void* vaddr_get (enum pool_flags pf,uint32_t pg_cnt){
 
 uint32_t* pte_ptr (uint32_t vaddr){
     
-    uint32_t* pte = (uint32_t) (0xffc00000 + ((vaddr & 0xffc00000)>>10) + PTE_IDX(vaddr) * 4);
+    uint32_t* pte = (uint32_t*) (0xffc00000 + ((vaddr & 0xffc00000)>>10) + PTE_IDX(vaddr) * 4);
     return pte;
 }
 

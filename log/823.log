@@ -1,2 +1,0 @@
-I have a problem.How to compile 32-bit code  on 64-bit linux version?I solve it.You can pass "-m32"
-options as follow GNU gcc.Similarly,you also can pass "-melf_i386" options as follow ld.

@@ -1,5 +1,7 @@
 #ifndef  _KERNEL_MEMORY_H
 #define  _KERNEL_MEMORY_H
+#include "stdint.h"
+#include "bitmap.h"
 
 #define   PG_P_1   1
 #define   PG_P_0   0
@@ -8,8 +10,6 @@
 #define   PG_US_S  0
 #define   PG_US_U  4
 #define   PG_SIZE  4096
-#include "stdint.h"
-#include "bitmap.h"
 
 struct virtual_addr {
     struct bitmap vaddr_bitmap;
@@ -23,15 +23,12 @@ enum pool_flags {
 };
 
 extern struct pool kernel_pool,user_pool;
-
-
-static void mem_pool_init (uint32_t all_mem);
-static void* vaddr_get (enum pool_flags pf,uint32_t pg_cnt);
+//void mem_pool_init (uint32_t all_mem);
+//void* vaddr_get (enum pool_flags pf,uint32_t pg_cnt);
 uint32_t* pte_ptr (uint32_t vaddr);
 uint32_t* pde_ptr (uint32_t vaddr);
-static void* palloc (struct pool* m_pool);
-static void page_table_add (void* _vaddr,void* _page_phyaddr);
-
+//void* palloc (struct pool* m_pool);
+//void page_table_add (void* _vaddr,void* _page_phyaddr);
 void* malloc_page (enum pool_flags pf,uint32_t pg_cnt);
 void* get_kernel_pages (uint32_t pg_cnt);
 void mem_init (void);

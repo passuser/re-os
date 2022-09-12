@@ -12,8 +12,8 @@ struct list_elem{
 };
 
 struct list{
-    struct list_elem* head;
-    struct list_elem* tail;
+    struct list_elem head;
+    struct list_elem tail;
 
 };
 

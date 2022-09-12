@@ -1,8 +1,8 @@
-#include "timer.h"
-#include "io.h"
+#include "../lib/kernel/timer.h"
+#include "../lib/kernel/io.h"
 #include "printf.h"
-#include "thread.h"
-#include "debug.h"
+#include "../lib/kernel/debug.h"
+#include "../lib/kernel/thread.h"
 
 #define   IRQ0_FREQUENCY    100
 #define   INPUT_FREQUENCY   1193180
@@ -21,11 +21,11 @@ uint8_t rwl,uint8_t counter_mode,uint16_t counter_value){
 counter_mode << 1)));
   outb(counter_port,(uint8_t)counter_value);
   outb(counter_port,(uint8_t)counter_value >> 8);
-  }; 
+} 
 
 static void intr_timer_handler(void){
     struct task_struct* cur_thread = running_thread();
-    ASSERT(cur_thread->stack_magic == 0x1900036);
+    ASSERT(cur_thread->stack_magic == 0x19900036);
     cur_thread->elapsed_ticks++;
     ticks++;
     if(cur_thread->ticks == 0){
@@ -33,7 +33,7 @@ static void intr_timer_handler(void){
     }else{
       cur_thread->ticks--;
     }
-};
+}
 
 void timer_init(){
     put_str("timer_init  start!\n");

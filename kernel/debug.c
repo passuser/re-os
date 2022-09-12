@@ -1,6 +1,6 @@
-#include"debug.h"
-#include"printf.h"
-#include"interrupt.h"
+#include "../lib/kernel/debug.h"
+#include "printf.h"
+#include "../lib/kernel/interrupt.h"
 void panic_spin(char* filename,int line,const char* func,const char* condition){
     intr_disable();
     put_str("\n--------! error!--------\n");

@@ -1,70 +1,98 @@
-object = build
-startaddr = -Ttext 0xc0001500
-lib = -I lib/ -I lib/kernel/ -g 
-c_filety = -c -m32 -fno-builtin -fno-stack-protector  -o
-ld_filety = -e main -melf_i386 -o
-filety = -f elf -o
-libk = lib/kernel
-OBJS = $(object)/main.o $(object)/printf.o $(object)/kernel.o $(object)/init.o\
-$(object)/interrupt.o $(object)/timer.o $(object)/debug.o $(object)/string.o\
-$(object)/bitmap.o $(object)/memory.o $(object)/thread.o $(object)/list.o   \
-$(object)/switch.o
+build_dir = ./build
+startaddr = 0xc0001500
+lib = -I ./lib/ -I ./lib/kernel/  
+c_filety = -c -m32 -fno-builtin -fno-stack-protector  -W\
+-Wstrict-prototypes -Wmissing-prototypes
+libk = ./lib/kernel
 
-all: $(object)/kernel.bin	
-	dd if=$(object)/kernel.bin of=hd60.img bs=512 count=200 seek=9 conv=notrunc    
+#####编译器
+AS = nasm
+CC = gcc
+LD = ld
+
+#####编译器参数
+CFLAGS = -Wall $(lib) $(c_filety)
+ASFLAGS = $(lib) -f elf 
+LDFLAGS = -Ttext $(startaddr) -e main -melf_i386  -Map $(build_dir)/kernel.map
+
+#########################         各模块文件        ###########
+
+OBJS = $(build_dir)/main.o $(build_dir)/printf.o $(build_dir)/kernel.o $(build_dir)/init.o\
+$(build_dir)/interrupt.o $(build_dir)/timer.o $(build_dir)/debug.o $(build_dir)/string.o\
+$(build_dir)/bitmap.o $(build_dir)/memory.o $(build_dir)/thread.o $(build_dir)/list.o   \
+$(build_dir)/switch.o $(build_dir)/sync.o $(build_dir)/console.o
+
+###################             操作                 ############
+
+all: $(build_dir)/kernel.bin	
+	dd if=$(build_dir)/kernel.bin of=hd60.img bs=512 count=200 seek=9 conv=notrunc    
 	@echo "hd finish"
 #	rm build/*
 	bochs -f bochsrc.disk
 
-$(object)/main.o: kernel/main.c  $(libk)/init.h $(libk)/printf.h\
+########               汇编编译                          #########
+
+$(build_dir)/printf.o: $(libk)/printf.asm $(libk)/printf.h  
+	$(AS) $(ASFLAGS) $< -o $@
+
+$(build_dir)/kernel.o: kernel/kernel.asm
+	$(AS) $(ASFLAGS) $< -o $@
+
+$(build_dir)/switch.o: kernel/switch.asm
+	$(AS) $(ASFLAGS) $< -o $@
+
+#################        c语言编译                       #########
+
+$(build_dir)/main.o: kernel/main.c  $(libk)/init.h $(libk)/printf.h\
 	$(libk)/memory.h $(libk)/thread.h
-		gcc $(lib)  $(c_filety) build/main.o kernel/main.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/printf.o: $(libk)/printf.asm $(libk)/printf.h  
-		nasm $(lib) $(filety)  build/printf.o $(libk)/printf.asm
-
-$(object)/kernel.o: kernel/kernel.asm
-		nasm $(lib) $(filety)  build/kernel.o kernel/kernel.asm
-
-$(object)/switch.o: kernel/switch.asm
-		nasm $(lib) $(filety) build/switch.o kernel/switch.asm
-
-$(object)/init.o: kernel/init.c  $(libk)/init.h   \
+$(build_dir)/init.o: kernel/init.c  $(libk)/init.h   \
 	$(libk)/printf.h $(libk)/interrupt.h $(libk)/timer.h\
 	$(libk)/memory.h
-		gcc $(lib)  $(c_filety)  build/init.o kernel/init.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/interrupt.o: kernel/interrupt.c $(libk)/interrupt.h\
+$(build_dir)/interrupt.o: kernel/interrupt.c $(libk)/interrupt.h\
 	$(libk)/memory.h lib/stdint.h $(libk)/global.h $(libk)/io.h\
 	$(libk)/printf.h
-		gcc  $(lib) $(c_filety) build/interrupt.o kernel/interrupt.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/timer.o: device/timer.c  $(libk)/timer.h $(libk)/io.h\
+$(build_dir)/timer.o: device/timer.c  $(libk)/timer.h $(libk)/io.h\
 	$(libk)/printf.h
-		gcc $(lib)  $(c_filety) build/timer.o device/timer.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/debug.o: kernel/debug.c $(libk)/debug.h $(libk)/printf.h\
+$(build_dir)/debug.o: kernel/debug.c $(libk)/debug.h $(libk)/printf.h\
 	$(libk)/interrupt.h
-	  gcc $(lib)  $(c_filety) build/debug.o kernel/debug.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/string.o: lib/string.c $(libk)/string.h $(libk)/debug.h\
+$(build_dir)/string.o: lib/string.c $(libk)/string.h $(libk)/debug.h\
 	$(libk)/global.h 
-		gcc $(lib)  $(c_filety) build/string.o lib/string.c 
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/bitmap.o: kernel/bitmap.c $(libk)/bitmap.h $(libk)/debug.h\
+$(build_dir)/bitmap.o: kernel/bitmap.c $(libk)/bitmap.h $(libk)/debug.h\
 	$(libk)/interrupt.h $(libk)/printf.h $(libk)/string.h lib/stdint.h
-		gcc $(lib)  $(c_filety) build/bitmap.o kernel/bitmap.c 
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/memory.o: kernel/memory.c $(libk)/memory.h $(libk)/global.h\
+$(build_dir)/memory.o: kernel/memory.c $(libk)/memory.h $(libk)/global.h\
 	$(libk)/printf.h $(libk)/debug.h $(libk)/string.h lib/stdint.h
-		gcc $(lib)  $(c_filety) build/memory.o kernel/memory.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/thread.o: kernel/thread.c $(libk)/thread.h $(libk)/global.h\
+$(build_dir)/thread.o: kernel/thread.c $(libk)/thread.h $(libk)/global.h\
 	$(libk)/memory.h $(libk)/string.h $(libk)/list.h
-		gcc $(lib)	$(c_filety) build/thread.o kernel/thread.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/list.o: kernel/list.c   $(libk)/list.h $(libk)/interrupt.h 
-	  gcc $(lib)  $(c_filety) $(object)/list.o kernel/list.c
+$(build_dir)/list.o: kernel/list.c   $(libk)/list.h $(libk)/interrupt.h 
+	$(CC) $(CFLAGS) $< -o $@
 
-$(object)/kernel.bin: $(OBJS)
-		ld  $(startaddr) $(ld_filety) build/kernel.bin $(OBJS) 
+$(build_dir)/sync.o: kernel/sync.c  $(libk)/sync.h $(libk)/list.h \
+$(libk)/interrupt.h
+	$(CC) $(CFLAGS) $< -o $@
+
+$(build_dir)/console.o: device/console.c $(libk)/console.h $(libk)/sync.h\
+$(libk)/thread.h
+	$(CC) $(CFLAGS) $< -o $@
+
+###################           链接目标文件                   ############
+
+$(build_dir)/kernel.bin: $(OBJS)
+	$(LD) $(LDFLAGS) $^ -o $@
