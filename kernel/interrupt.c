@@ -44,8 +44,12 @@ static void pic_init(void){        /*可编程中断处理器初始化*/
     outb (PIC_S_DATA,0x1);
 
 //时钟中断
-    outb (PIC_M_DATA,0xfe);
+/*    outb (PIC_M_DATA,0xfe);
     outb (PIC_S_DATA,0xff);
+*/
+//keyboard interrupt
+    outb(PIC_M_DATA,0xfc);
+    outb(PIC_S_DATA,0Xff);
     put_str ("pic_init  done\n");
 }
 

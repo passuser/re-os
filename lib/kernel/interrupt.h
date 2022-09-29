@@ -6,7 +6,7 @@ typedef  void*  intr_handler;
 enum intr_status{
   INTR_OFF,
   INTR_ON
-};//枚举量按顺序赋值0，1，2，3,....
+};//枚举量按顺序赋值0，1，2，3
 
 void idt_init (void);
 void register_handler(uint8_t vector_no,intr_handler function);

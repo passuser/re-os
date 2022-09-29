@@ -1,6 +1,6 @@
 build_dir = ./build
 startaddr = 0xc0001500
-lib = -I ./lib/ -I ./lib/kernel/  
+lib = -I ./lib/ -I ./lib/kernel/ -I ./device/ 
 c_filety = -c -m32 -fno-builtin -fno-stack-protector  -W\
 -Wstrict-prototypes -Wmissing-prototypes
 libk = ./lib/kernel
@@ -20,7 +20,8 @@ LDFLAGS = -Ttext $(startaddr) -e main -melf_i386  -Map $(build_dir)/kernel.map
 OBJS = $(build_dir)/main.o $(build_dir)/printf.o $(build_dir)/kernel.o $(build_dir)/init.o\
 $(build_dir)/interrupt.o $(build_dir)/timer.o $(build_dir)/debug.o $(build_dir)/string.o\
 $(build_dir)/bitmap.o $(build_dir)/memory.o $(build_dir)/thread.o $(build_dir)/list.o   \
-$(build_dir)/switch.o $(build_dir)/sync.o $(build_dir)/console.o
+$(build_dir)/switch.o $(build_dir)/sync.o $(build_dir)/console.o $(build_dir)/keyboard.o\
+$(build_dir)/ioqueue.o
 
 ###################             操作                 ############
 
@@ -91,6 +92,15 @@ $(libk)/interrupt.h
 $(build_dir)/console.o: device/console.c $(libk)/console.h $(libk)/sync.h\
 $(libk)/thread.h
 	$(CC) $(CFLAGS) $< -o $@
+
+$(build_dir)/keyboard.o: device/keyboard.c $(libk)/keyboard.h $(libk)/sync.h\
+$(libk)/thread.h
+	$(CC) $(CFLAGS) $< -o $@
+
+$(build_dir)/ioqueue.o: device/ioqueue.c $(libk)/ioqueue.h $(libk)/sync.h\
+$(libk)/thread.h
+	$(CC) $(CFLAGS) $< -o $@
+
 
 ###################           链接目标文件                   ############
 

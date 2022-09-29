@@ -1,5 +1,5 @@
-#config_interface: sdl
-#display_library: sdl
+#config_interface: x
+display_library: x
 #memory: guest=64, host=32                                         #定义内存
 megs: 32
 romimage: file= /usr/share/bochs/BIOS-bochs-latest                  #bios映像
